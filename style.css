@@ -1,0 +1,103 @@
+
+* , *::before ,*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    display: grid;
+    grid-template-areas: "det calc";
+    padding:0px;
+    background-color: #f8fafc;
+    font-family: 'Cairo', sans-serif;
+}
+
+.calc {
+    height: 60%;
+    display: grid;
+    grid-template-columns: repeat(4,auto);
+    grid-gap: 10px;
+    padding: 10px;
+    font-size: 2rem;
+    grid-area: calc;
+    margin: 10px 0 auto 0 ;
+    border:solid 3px;
+    border-radius: 18px;
+    background-color: #1e293b;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    gap: 15px; /* instead of 10px */
+    padding: 15px;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+
+}
+.calc button:active {
+    transform: scale(0.95);
+}
+
+.calc input {
+    grid-column: span 4;
+    grid-row: span 8;
+    max-width: 25rem;
+    min-width: 100%;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align:right;
+    padding-right: 10px;
+    border-radius: 2px;
+    color: white;
+    background-color: #0f172a;
+    padding: 20px;
+    font-size: 1.8rem;
+    border-radius: 12px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.calc button {
+    font-size: 1.2rem;
+    border-radius: 5px;
+    background-color: #e2e8f0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+.calc button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+}
+
+.calc button:hover {
+    background-color: #cbd5f5;
+}
+
+.calc .op,
+#equal{
+    background-color: #f59e0b;
+}
+button img {
+    width: 1.5rem;
+}
+
+.details {
+    height: 60%;
+    grid-area: det;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin:10px 20px auto;
+}
+
+.details input {
+    max-width:10rem;
+    height: 3rem;
+    font-size:1.5rem;
+    text-align: right;
+    padding-right: 10px;
+    border-radius: 3px ;
+    background-color: #fff0d3;
+    background-color: #334155;
+    color: white;
+    border: none;
+}
