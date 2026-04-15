@@ -8,8 +8,8 @@ let operations = ["+","-","*","/"];
 
 calculator.addEventListener("click",(ev)=>{
     // Add numbers to display
-    if(ev.target.classList.contains("num")){
-        display.value += ev.target.textContent;
+    if(tr){
+
     }
     else if (ev.target.classList.contains("op")){
         if(opLock===true){
@@ -44,7 +44,7 @@ calculator.addEventListener("click",(ev)=>{
     else if (ev.target.id === "reverse" && (opLock === true)){
         display.value = +display.value * -1 ;
     }
-    else if (ev.target.id === "hol"){
+    else if (ev.target.id === "hol"){   
         let holy = document.querySelector("#holy");
         holy.value = Number(display.value);
         display.value = "";
@@ -66,20 +66,6 @@ calculator.addEventListener("click",(ev)=>{
     }
     renderTotal();
 });
-
-// render total and diff
-
-function renderTotal(){
-    let holy = document.querySelector("#holy");
-    let receit = document.querySelector("#receit");
-    let tips = document.querySelector("#tips");
-    let add = document.querySelector("#addf");
-    let total = document.querySelector("#total");
-    let inn = document.querySelector("#in");
-    let diff = document.querySelector("#diff");
-    total.value = +holy.value + +receit.value + +tips.value + +add.value ;
-}
-
 let ind = document.querySelector("#in");
 
 window.addEventListener("keydown",(ev)=>{
@@ -135,9 +121,3 @@ window.addEventListener("keydown",(ev)=>{
     renderDiff();
 });
 
-function renderDiff(){
-    let total = document.querySelector("#total");
-    let inn = document.querySelector("#in");
-    let diff = document.querySelector("#diff");
-    diff.value = Number(total.value) - Number(inn.value);
-}

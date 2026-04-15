@@ -101,7 +101,7 @@ button img {
     color: white;
     border: none;
 }
-
-.calc {
-    
+.details input:focus {
+    outline: none;
+    box-shadow: 0 0 50px #f59e0b;
 }
