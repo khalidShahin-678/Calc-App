@@ -1,18 +1,15 @@
 // new structure for testing
 
-let display = document.querySelector("#dis-inp"); // Display bar of calc
-let calculator = document.querySelector(".calc"); // the div of calculator
+const display = document.querySelector("#dis-inp"); // Display bar of calc
+const calculator = document.querySelector(".calc"); // the div of calculator
 //
-let holy = document.querySelector("#holy");     // Frozen money
-let receit = document.querySelector("#receit"); // transaction money
-let tips = document.querySelector("#tips");     // coins money
-let add = document.querySelector("#addf");    // added money
+const fieldsBtns = document.querySelectorAll(".fieldsBtn");
+const moneyFields = document.querySelectorAll(".moneyField");
 //
 let total = document.querySelector("#total");   // total money
-let inn = document.querySelector("#in");        // in the drawer money
+let drawer = document.querySelector("#drawer");        // in the drawer money
 let diff = document.querySelector("#diff");     // the difference between in the drawer and the total
 // locks
-let opLock = false;
 let dotLock = true;
 // operations & Numbers
 let operations = ["+","-","*","/"];
@@ -22,36 +19,59 @@ function appendToDisplay(ch){
     display.value += ch;
 }
 function operation (op){
-    if(opLock==true){
-        opLock = false;
-        dotLock = true;
+    let last = display.value.slice(-1);
+    if(operations.includes(last) && op!=="-"){  // check if the last char is already operation
+        backspace();
+        appendToDisplay(op);
     }
-    else if(display.value !==""){
-        calculate();
+    else if(display.value==="" && op!=="-"){
+        return;
     }
-    appendToDisplay(op);
+    else{
+        if(History.length === 0 && display.value!=="" ){
+            let value = Number(display.value);
+            let type  = (value>=0)?"plus":"minus"; 
+            addHistoryProcess(display.value, type);
+            renderHistoryBar()
+        }
+
+        appendToDisplay(op);
+        dotLock= true;    
+    }
 }
 function backspace(){
-    if(operations.includes(display.value[display.value.length-1])){
-            opLock = true;
-        }
-        else if(display.value[display.value.length-1] == "."){
+        if(display.value[display.value.length-1] == "."){
             dotLock = true;
         }
         display.value = display.value.slice(0,-1);
 }
 function clearDisplay(){
     display.value = "";
-}
-function backspace(){
-    display.value = display.value.slice(0,-1);
+    dotLock = true;
+    History.length = 0;
+    renderHistoryBar();
 }
 function calculate(){
-    display.value = eval(display.value);
+    try{
+        display.value = eval(display.value);
+        dotLock = true;
+    }
+    catch{
+        display.value = "Error";
+        setTimeout(()=>{
+            display.value = "";
+        },1000);
+        History.length =0;
+        renderHistoryBar();
+    }
 }
 function renderDetailsBar(){
-    total.value = Number(holy.value) +  Number(receit.value) + Number(tips.value) + Number(add.value);
-    diff.value  = Number(total.value) - Number(inn.value);
+    let sum = 0;
+    moneyFields.forEach((el)=>{
+        sum += Number(el.value);
+    })
+    total.value = Number(sum);
+    diff.value  = Number(total.value) - Number(drawer.value);
 }
 calculator.addEventListener("click" , (event)=>{
     let EvClick = event.target;
@@ -83,39 +103,39 @@ calculator.addEventListener("click" , (event)=>{
         backspace();
     }
     // Reverse
-    else if (EvClickId == "reverse" && opLock == true){
-        display.value *= -1 ;
+    else if (EvClickId == "reverse" && display.value != ""){
+        display.value = Number(display.value) * -1 ;
     }
-    else if(EvClickId != ""){
-        // to مجمد  
-        if (EvClickId == "hol"){
-            holy.value = Number(display.value);
-            clearDisplay();
+    else if(EvClick.classList.contains("fieldsBtn")){
+        for (const btn in fieldsBtns) {
+            let curr = fieldsBtns[btn];
+            if(EvClick === curr){
+                moneyFields[btn].value = Number(display.value);
+                clearDisplay();
+                renderDetailsBar();
+                History.length =0;
+                renderHistoryBar();
+                break;
+            }
         }
-        // to تحويلات
-        else if (EvClickId == "rec"){
-            receit.value = Number(display.value);
-            clearDisplay();
-        }
-        // to فكة
-        else if (EvClickId == "tip"){
-            tips.value = Number(display.value);
-            clearDisplay();
-        }
-        // to اضافي
-        else if (EvClickId === "add"){
-            add.value = Number(display.value);
-            clearDisplay();
-        }
-    renderDetailsBar();
     }
-    console.log(EvClickId);
 });
 // Keyboard
 window.addEventListener("keydown",(event)=>{
     let evKey = event.key;
+    // drawer input
+    if(event.target === drawer){
+        if(!numbers.includes(evKey) && event.key !=="Backspace" && event.key !== "ArrowRight" && event.key !== "ArrowLeft"){
+            event.preventDefault();
+        }
+        else if (numbers.includes(evKey)){
+            event.preventDefault();
+            event.target.value += evKey;
+        }
+        renderDetailsBar();
+    }
     // Number
-    if(numbers.includes(evKey)){
+    else if(numbers.includes(evKey)){
         appendToDisplay(evKey);
     }
     // Operation
@@ -133,8 +153,9 @@ window.addEventListener("keydown",(event)=>{
         dotLock = false;
     }
     // Clear
-    else if (evKey === "C" || evKey === "c"){
+    else if (evKey === "C" || evKey === "c" || evKey === "Escape"){
         clearDisplay();
+
     }
     // Backspace
     else if (evKey === "Backspace"){
@@ -144,4 +165,35 @@ window.addEventListener("keydown",(event)=>{
     else if (evKey === "r" || evKey === "R"){
         display.value *= -1 ;
     }
+    renderDetailsBar();
 });
+// History functions
+const historyBar = document.querySelector(".history");
+let History = []; // this carry the processes of History Bar
+// add a process to history array
+function addHistoryProcess(val , ty){
+    let process = {
+        value:val,
+        type:ty
+    }
+    History.push(process);
+}
+function renderHistoryBar (){
+    historyBar.innerHTML ="";
+    History.forEach((el)=>{
+        // define structure
+        let process = document.createElement("div");
+        let processValue = document.createElement("span");
+        // assign attributes
+        process.classList.add("process");
+        process.classList.add(el["type"]);
+        // assign value
+        processValue.innerText = Number(el["value"]);
+        // append to History Bar
+        process.appendChild(processValue);
+        historyBar.appendChild(process);
+    });
+};
+
+const expr = "12+3.5*4-6/2";
+const tokens = expr.match(/(\d+(?:\.\d+)?|[+\-*/])/g);
